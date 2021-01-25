@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 
 public class AnagramService {
     private static final Logger logger = LoggerFactory.getLogger(AnagramService.class);
@@ -193,5 +194,16 @@ public class AnagramService {
         }
 
         return list.isEmpty();
+    }
+
+    public static boolean checkAnagramBitesAsync(String text1, String text2) throws IllegalArgumentException {
+        if (text1.isEmpty() || text2.isEmpty())
+            throw new IllegalArgumentException("empty string");
+        if (text1.equals(text2))
+            return true;
+        if (text1.length() != text2.length())
+            return false;
+
+        return ForkJoinPool.commonPool().invoke(new AsyncAnargamTask(text1, text2));
     }
 }

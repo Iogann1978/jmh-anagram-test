@@ -86,6 +86,33 @@ public class AnagramTest {
     }
 
     @Test
+    public void testCharsBitsAsync() {
+        Assert.assertNotNull("chars is null", chars);
+        Assert.assertFalse("chars is empty", chars.isEmpty());
+        Map<String, Set<String>> multiMap = new HashMap<>();
+        for (char c1 : chars) {
+            for (char c2 : chars) {
+                if (c1 != c2) {
+                    String text1 = new String(new char[]{c1});
+                    String text2 = new String(new char[]{c2});
+                    if (AnagramService.checkAnagramBitesAsync(text1, text2))
+                        multiMap.computeIfAbsent(text1, key -> new HashSet<>()).add(text2);
+                }
+            }
+        }
+        multiMap.entrySet().stream().filter(e -> e.getValue().size() > 2)
+                .forEach(e -> logger.debug("Collisions for {}: {}", e.getKey(), e.getValue())
+                );
+        Assert.assertTrue(AnagramService.checkAnagramBitesAsync("BRITNEYSPeARs", "PRESBYTeRIANs"));
+        Assert.assertTrue(AnagramService.checkAnagramBitesAsync("ERICcLAPTON", "NARCOLEPTIc"));
+        Assert.assertTrue(AnagramService.checkAnagramBitesAsync("BRITNEYSPEARS", "PRESBYTERIANS"));
+        Assert.assertTrue(AnagramService.checkAnagramBitesAsync("ERICCLAPTON", "NARCOLEPTIC"));
+        Assert.assertFalse(AnagramService.checkAnagramBitesAsync("ERICCLAPTON", "ERICcLAPTON"));
+        Assert.assertFalse(AnagramService.checkAnagramBitesAsync("BRITNEYSPEARS", "BRITNEYSPeARs"));
+        Assert.assertFalse(AnagramService.checkAnagramBitesAsync("DEEPENED", "DEPENDED"));
+    }
+
+    @Test
     public void testCharsMap() {
         Assert.assertNotNull("chars is null", chars);
         Assert.assertFalse("chars is empty", chars.isEmpty());
