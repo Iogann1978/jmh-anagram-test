@@ -1,77 +1,80 @@
 package ru.home;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
 public class AsyncAnargamTask extends RecursiveTask<Boolean> {
 
-    private String text1, text2;
+    private String[] texts;
 
-    public AsyncAnargamTask(String text1, String text2) {
-        this.text1 = text1;
-        this.text2 = text2;
+    List<BitSet> listBS;
+
+    public AsyncAnargamTask(String[] texts) {
+        this.texts = texts;
     }
 
     @Override
     protected Boolean compute() {
-        if(text1.equals(text2))
+        listBS = new ArrayList<>();
+        if (texts != null && texts.length == 2) {
+            AsyncAnargamTask subTask = new AsyncAnargamTask(new String[]{texts[1]});
+            subTask.fork();
+            doTask(texts[0], listBS);
+            subTask.join();
+            return checkEquals(getListBS(), subTask.getListBS());
+        } else {
+            doTask(texts[0], listBS);
             return true;
-        if(text1.length() != text2.length())
-            return false;
-
-        char[] chars1 = text1.toCharArray();
-        char[] chars2 = text2.toCharArray();
-
-        char max1 = 0;
-        for(char c : chars1) {
-            if(c > max1) max1 = c;
         }
-        char max2 = 0;
-        for(char c : chars2) {
-            if(c > max2) max2 = c;
-        }
-        if (max1 != max2)
-            return false;
-
-        BitSet s1 = new BitSet(max1 + 1);
-        StringBuilder sb1 = new StringBuilder();
-        for(char c : chars1) {
-            if (s1.get(c))
-                sb1.append(c);
-            else
-                s1.set(c);
-        }
-
-        BitSet s2 = new BitSet(max2 + 1);
-        StringBuilder sb2 = new StringBuilder();
-        for(char c : chars2) {
-            if (s2.get(c))
-                sb2.append(c);
-            else
-                s2.set(c);
-        }
-
-        String doubles1 = sb1.toString();
-        String doubles2 = sb2.toString();
-        if(!doubles1.isEmpty() || !doubles2.isEmpty()) {
-            if (doubles1.length() != doubles2.length())
-                return false;
-            else {
-                AsyncAnargamTask subTask = new AsyncAnargamTask(doubles1, doubles2);
-                subTask.fork();
-                if (!subTask.join())
-                    return false;
-            }
-        }
-
-        return checkEquals(s1, s2);
     }
 
-    private boolean checkEquals(BitSet s1, BitSet s2) {
+    private void doTask(String text, List<BitSet> listBS) {
+        char[] chars = text.toCharArray();
+
+        char max = 0;
+        for(char c : chars) {
+            if(c > max) max = c;
+        }
+
+        BitSet s = new BitSet(max + 1);
+        StringBuilder sb = new StringBuilder();
+        for(char c : chars) {
+            if (s.get(c))
+                sb.append(c);
+            else
+                s.set(c);
+        }
+        listBS.add(s);
+
+        if(sb.length() != 0) {
+            doTask(sb.toString(), listBS);
+        }
+    }
+
+    private boolean checkEquals(List<BitSet> lbs1, List<BitSet> lbs2) {
+        if (lbs1.size() != lbs2.size())
+            return false;
+        for (int i = 0; i < lbs1.size(); i++) {
+            if (!checkEquals(lbs1.get(i), lbs2.get(i)))
+                return false;
+        }
+        return true;
+    }
+
+    private static boolean checkEquals(BitSet s1, BitSet s2) throws IllegalArgumentException {
+        if (s1.isEmpty() || s2.isEmpty())
+            throw new IllegalArgumentException("empty set");
+
         if (s1.length() != s2.length())
             return false;
 
         s1.xor(s2);
         return s1.isEmpty();
+    }
+
+    public List<BitSet> getListBS() {
+        return listBS;
     }
 }

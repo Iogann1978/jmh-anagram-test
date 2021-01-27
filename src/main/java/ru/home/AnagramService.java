@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 public class AnagramService {
     private static final Logger logger = LoggerFactory.getLogger(AnagramService.class);
@@ -66,9 +68,9 @@ public class AnagramService {
                 s2.set(c);
         }
 
-        String doubles1 = sb1.toString();
-        String doubles2 = sb2.toString();
-        if(!doubles1.isEmpty() || !doubles2.isEmpty()) {
+        if(sb1.length() != 0 || sb2.length() != 0) {
+            String doubles1 = sb1.toString();
+            String doubles2 = sb2.toString();
             if (doubles1.length() != doubles2.length())
                 return false;
             else
@@ -204,6 +206,6 @@ public class AnagramService {
         if (text1.length() != text2.length())
             return false;
 
-        return ForkJoinPool.commonPool().invoke(new AsyncAnargamTask(text1, text2));
+        return ForkJoinPool.commonPool().invoke(new AsyncAnargamTask(new String[]{text1, text2}));
     }
 }
