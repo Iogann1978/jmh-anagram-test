@@ -24,10 +24,10 @@ public class MyBenchmark {
 
     @Setup
     public void init() {
-        words.add("debitcard");
-        words.add("badcredit");
-        words.add("astronomer");
-        words.add("moonstarer");
+        words.add("BRITNEYSPEARS");
+        words.add("PRESBYTERIANS");
+        words.add("ERICCLAPTON");
+        words.add("NARCOLEPTIC");
     }
 
     //@Setup
