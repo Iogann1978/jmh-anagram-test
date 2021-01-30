@@ -68,14 +68,17 @@ public class AnagramService {
                 s2.set(c);
         }
 
-        if(sb1.length() == sb2.length() && sb1.length() != 0) {
+        if (!checkEquals(s1, s2))
+            return false;
+
+        if(sb1.length() != 0 && sb1.length() == sb2.length()) {
             String doubles1 = sb1.toString();
             String doubles2 = sb2.toString();
             if (!checkAnagramBites(doubles1, doubles2))
                 return false;
         }
 
-        return checkEquals(s1, s2);
+        return true;
     }
 
     private static boolean checkEquals(BitSet s1, BitSet s2) throws IllegalArgumentException {
