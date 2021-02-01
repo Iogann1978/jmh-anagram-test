@@ -5,13 +5,13 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
-public class AsyncAnargamTask extends RecursiveTask<Boolean> {
+public class AsyncBitsTask extends RecursiveTask<Boolean> {
 
     private String[] texts;
 
     List<BitSet> listBS;
 
-    public AsyncAnargamTask(String[] texts) {
+    public AsyncBitsTask(String[] texts) {
         this.texts = texts;
     }
 
@@ -19,7 +19,7 @@ public class AsyncAnargamTask extends RecursiveTask<Boolean> {
     protected Boolean compute() {
         listBS = new ArrayList<>();
         if (texts != null && texts.length == 2) {
-            AsyncAnargamTask subTask = new AsyncAnargamTask(new String[]{texts[1]});
+            AsyncBitsTask subTask = new AsyncBitsTask(new String[]{texts[1]});
             subTask.fork();
             doTask(texts[0], listBS);
             subTask.join();

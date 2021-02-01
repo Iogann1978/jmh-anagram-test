@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class MyBenchmark {
     private Set<String> words = new HashSet<>();
 
-    @Setup
+    //@Setup
     public void init() {
         words.add("BRITNEYSPEARS");
         words.add("PRESBYTERIANS");
@@ -30,7 +30,7 @@ public class MyBenchmark {
         words.add("NARCOLEPTIC");
     }
 
-    //@Setup
+    @Setup
     public void initLOTR() {
         InputStream is = this.getClass().getResourceAsStream("/book.txt");
         StringBuilder sb = new StringBuilder();
@@ -56,60 +56,66 @@ public class MyBenchmark {
 
     @Benchmark
     public void testMap() {
+        AnagramService service = new MapService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramMap(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
 
     @Benchmark
     public void testBites() {
+        AnagramService service = new BitsService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramBites(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
 
     @Benchmark
     public void testSort() {
+        AnagramService service = new SortService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramSort(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
 
     @Benchmark
     public void testPow() {
+        AnagramService service = new PowService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramPow(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
 
     @Benchmark
     public void testList() {
+        AnagramService service = new ListService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramList(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
 
     @Benchmark
     public void testBitesAsync() {
+        AnagramService service = new AsyncBitsService();
         for (String w1 : words) {
             for (String w2 : words) {
                 if (!w1.equals(w2))
-                    AnagramService.checkAnagramBitesAsync(w1, w2);
+                    service.doCheck(w1, w2);
             }
         }
     }
